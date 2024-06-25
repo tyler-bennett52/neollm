@@ -18,7 +18,6 @@ You are an AI programming assistant integrated into a code editor. Your purpose 
 
 function M.setup(opts)
   M.config = vim.tbl_deep_extend('force', M.config, opts or {})
-
   -- Get API key from environment variable
   M.config.services.openai.api_key = os.getenv 'OPENAI_API_KEY'
   if not M.config.services.openai.api_key then
@@ -44,7 +43,6 @@ function M.call_openai_api(prompt)
   if not M.config.services.openai.api_key then
     error 'OpenAI API key is not set. Please call M.setup() first.'
   end
-
   local request_body = json.encode {
     model = M.config.services.openai.model,
     messages = {
@@ -52,7 +50,6 @@ function M.call_openai_api(prompt)
       { role = 'user', content = prompt },
     },
   }
-
   local response_body = {}
   local request, code = http.request {
     url = 'https://api.openai.com/v1/chat/completions',
@@ -64,11 +61,9 @@ function M.call_openai_api(prompt)
     source = ltn12.source.string(request_body),
     sink = ltn12.sink.table(response_body),
   }
-
   if code ~= 200 then
     error('OpenAI API request failed with code ' .. tostring(code))
   end
-
   local response = json.decode(table.concat(response_body))
   return response.choices[1].message.content
 end
@@ -84,15 +79,24 @@ function M.write_to_file(content)
   end
 end
 
+function M.write_over_selection(content)
+  local s_start = vim.fn.getpos "'<"
+  local s_end = vim.fn.getpos "'>"
+  vim.api.nvim_buf_set_text(0, s_start[2] - 1, s_start[3] - 1, s_end[2] - 1, s_end[3], vim.split(content, '\n'))
+  print 'Response written over the highlighted text'
+end
+
 function M.prompt(opts)
   local input = opts.args
   if opts.range == 2 then
     input = M.get_visual_selection()
   end
   print('User input:', input)
-
   local response = M.call_openai_api(input)
   M.write_to_file(response)
+  if opts.range == 2 then
+    M.write_over_selection(response)
+  end
 end
 
 function M.load()
