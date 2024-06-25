@@ -11,18 +11,8 @@ function M.setup(user_config)
   M.config = vim.tbl_extend('force', M.config, user_config or {})
 end
 
-local function get_selected_text()
-  local start_pos = vim.fn.getpos "'<"
-  local end_pos = vim.fn.getpos "'>"
-  local lines = vim.fn.getline(start_pos[2], end_pos[2])
-
-  if #lines == 0 then
-    return ''
-  end
-
-  lines[1] = string.sub(lines[1], start_pos[3])
-  lines[#lines] = string.sub(lines[#lines], 1, end_pos[3])
-
+local function get_selected_text(start_line, end_line)
+  local lines = vim.fn.getline(start_line, end_line)
   return table.concat(lines, '\n')
 end
 
@@ -65,8 +55,8 @@ local function send_to_openai(selected_text)
   end
 end
 
-function M.send_selection_to_openai()
-  local selected_text = get_selected_text()
+function M.send_selection_to_openai(range_start, range_end)
+  local selected_text = get_selected_text(range_start, range_end)
   if selected_text == '' then
     vim.api.nvim_err_writeln 'No text selected!'
     return
@@ -76,9 +66,9 @@ function M.send_selection_to_openai()
   insert_text_at_cursor(response)
 end
 
--- Define the command :AIGO
-vim.api.nvim_create_user_command('AIGO', function()
-  M.send_selection_to_openai()
-end, {})
+-- Define the command :AIGO with range support
+vim.api.nvim_create_user_command('AIGO', function(opts)
+  M.send_selection_to_openai(opts.line1, opts.line2)
+end, { range = true })
 
 return M
