@@ -7,6 +7,6 @@ end
 require('neollm').load()
 
 -- Plugin interface
-vim.api.nvim_create_user_command('NeoLLMPrompt', function(args)
-  require('neollm').prompt { prompt = args.args }
-end, { nargs = '+' })
+vim.api.nvim_create_user_command('NeoLLMPrompt', function(opts)
+  require('neollm').prompt(opts)
+end, { nargs = '*', range = true })
