@@ -1,7 +1,7 @@
 local M = {}
 
 -- Default configuration
-local config = {
+M.config = {
   timeout_ms = 10000,
   system_prompt = [[
 You are an AI programming assistant integrated into a code editor. Your purpose is to help the user with programming tasks as they write code.
@@ -12,7 +12,7 @@ You are an AI programming assistant integrated into a code editor. Your purpose 
 }
 
 function M.setup(opts)
-  config = vim.tbl_deep_extend('force', config, opts or {})
+  M.config = vim.tbl_deep_extend('force', M.config, opts or {})
 end
 
 function M.prompt(opts)
