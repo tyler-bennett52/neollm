@@ -76,6 +76,9 @@ function M.send_selection_to_openai()
   insert_text_at_cursor(response)
 end
 
-vim.api.nvim_set_keymap('v', '<leader>ai', ":lua require('openai').send_selection_to_openai()<CR>", { noremap = true, silent = true })
+-- Define the command :AIGO
+vim.api.nvim_create_user_command('AIGO', function()
+  M.send_selection_to_openai()
+end, {})
 
 return M
