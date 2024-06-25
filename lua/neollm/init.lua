@@ -20,4 +20,10 @@ function M.prompt(opts)
   -- We'll implement the actual LLM call later
 end
 
+-- Ensure the plugin is loaded
+function M.load()
+  -- This function can be empty for now
+  -- We'll use it to ensure the plugin is loaded before use
+end
+
 return M

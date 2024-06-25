@@ -3,6 +3,9 @@ if vim.fn.has 'nvim-0.7.0' == 0 then
   return
 end
 
+-- Load the plugin
+require('neollm').load()
+
 -- Plugin interface
 vim.api.nvim_create_user_command('NeoLLMPrompt', function(args)
   require('neollm').prompt { prompt = args.args }
