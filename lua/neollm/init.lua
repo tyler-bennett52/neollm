@@ -11,7 +11,7 @@ You are an AI programming assistant integrated into a code editor. Your purpose 
   ]],
   services = {
     openai = {
-      model = 'gpt-3.5-turbo', -- or whichever model you prefer
+      model = 'gpt-4o', -- or whichever model you prefer
     },
   },
 }
